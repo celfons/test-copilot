@@ -136,6 +136,21 @@ npm run test:watch
 npm run test:coverage
 ```
 
+### CI/CD - Integração Contínua
+
+O projeto inclui uma GitHub Action que executa automaticamente:
+
+- ✅ **Linting** - Verifica qualidade do código com ESLint
+- ✅ **Testes Unitários** - Executa todos os 76 testes
+- ✅ **Cobertura de Código** - Gera relatório de cobertura (95.79%)
+- ✅ **Build** - Compila o TypeScript para JavaScript
+
+A Action é executada automaticamente:
+- Em todos os **Pull Requests** para a branch `main`
+- Em todos os **pushes** para a branch `main`
+
+O merge para `main` só é permitido se todos os testes passarem. ✅
+
 ## 📝 API Endpoints
 
 ### Base URL
