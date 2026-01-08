@@ -67,6 +67,85 @@ describe('User Entity', () => {
         });
       }).toThrow('Age must be less than 150');
     });
+
+    it('should throw error for name with only spaces', () => {
+      expect(() => {
+        new User({
+          name: '   ',
+          email: 'john@example.com',
+          age: 30,
+        });
+      }).toThrow('Name is required');
+    });
+
+    it('should throw error for name longer than 100 characters', () => {
+      const longName = 'a'.repeat(101);
+      expect(() => {
+        new User({
+          name: longName,
+          email: 'john@example.com',
+          age: 30,
+        });
+      }).toThrow('Name must have at most 100 characters');
+    });
+
+    it('should throw error for email with only spaces', () => {
+      expect(() => {
+        new User({
+          name: 'John Doe',
+          email: '   ',
+          age: 30,
+        });
+      }).toThrow('Email is required');
+    });
+
+    it('should throw error for null age', () => {
+      expect(() => {
+        new User({
+          name: 'John Doe',
+          email: 'john@example.com',
+          age: null as unknown as number,
+        });
+      }).toThrow('Age is required');
+    });
+
+    it('should throw error for undefined age', () => {
+      expect(() => {
+        new User({
+          name: 'John Doe',
+          email: 'john@example.com',
+          age: undefined as unknown as number,
+        });
+      }).toThrow('Age is required');
+    });
+
+    it('should accept age of 0', () => {
+      const user = new User({
+        name: 'Baby Doe',
+        email: 'baby@example.com',
+        age: 0,
+      });
+      expect(user.age).toBe(0);
+    });
+
+    it('should accept age of 150', () => {
+      const user = new User({
+        name: 'Old Doe',
+        email: 'old@example.com',
+        age: 150,
+      });
+      expect(user.age).toBe(150);
+    });
+
+    it('should accept name exactly 100 characters', () => {
+      const exactName = 'a'.repeat(100);
+      const user = new User({
+        name: exactName,
+        email: 'john@example.com',
+        age: 30,
+      });
+      expect(user.name).toBe(exactName);
+    });
   });
 
   describe('Update', () => {
@@ -136,6 +215,45 @@ describe('User Entity', () => {
       expect(() => {
         user.updateName('');
       }).toThrow(ValidationError);
+    });
+
+    it('should throw error when updating to invalid email', () => {
+      const user = new User({
+        name: 'John Doe',
+        email: 'john@example.com',
+        age: 30,
+      });
+
+      expect(() => {
+        user.updateEmail('invalid-email');
+      }).toThrow('Invalid email format');
+    });
+
+    it('should throw error when updating to invalid age', () => {
+      const user = new User({
+        name: 'John Doe',
+        email: 'john@example.com',
+        age: 30,
+      });
+
+      expect(() => {
+        user.updateAge(-5);
+      }).toThrow('Age must be a positive number');
+    });
+
+    it('should update only specified fields', () => {
+      const user = new User({
+        name: 'John Doe',
+        email: 'john@example.com',
+        age: 30,
+      });
+
+      const originalEmail = user.email;
+      user.update({ name: 'Jane Doe' });
+
+      expect(user.name).toBe('Jane Doe');
+      expect(user.email).toBe(originalEmail);
+      expect(user.age).toBe(30);
     });
   });
 
